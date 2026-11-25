@@ -1,5 +1,5 @@
 // Replace this with your deployed Render backend URL (no trailing slash)
-const RENDER_API_BASE = "https://youtube-transcript-app.onrender.com";
+const RENDER_API_BASE = "https://youtube-transcript-app-eqp7.onrender.com";
 
 const isLocalhost =
   window.location.hostname === "127.0.0.1" ||
