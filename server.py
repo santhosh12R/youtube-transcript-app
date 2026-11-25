@@ -1,4 +1,5 @@
 import json
+import os
 import re
 import urllib.error
 import urllib.parse
@@ -11,6 +12,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse
 from fastapi.staticfiles import StaticFiles
 from youtube_transcript_api import YouTubeTranscriptApi
+from youtube_transcript_api.proxies import GenericProxyConfig, WebshareProxyConfig
 from youtube_transcript_api._errors import (
     CouldNotRetrieveTranscript,
     NoTranscriptFound,
@@ -100,6 +102,31 @@ def serve_index():
     return FileResponse(STATIC_DIR / "index.html")
 
 
+def build_transcript_api() -> YouTubeTranscriptApi:
+    """Create a YouTubeTranscriptApi client, using proxy env vars when configured."""
+    ws_user = os.getenv("WEBSHARE_PROXY_USERNAME", "").strip()
+    ws_pass = os.getenv("WEBSHARE_PROXY_PASSWORD", "").strip()
+    if ws_user and ws_pass:
+        return YouTubeTranscriptApi(
+            proxy_config=WebshareProxyConfig(
+                proxy_username=ws_user,
+                proxy_password=ws_pass,
+            )
+        )
+
+    http_url = os.getenv("PROXY_HTTP_URL", "").strip() or None
+    https_url = os.getenv("PROXY_HTTPS_URL", "").strip() or None
+    if http_url or https_url:
+        return YouTubeTranscriptApi(
+            proxy_config=GenericProxyConfig(
+                http_url=http_url,
+                https_url=https_url,
+            )
+        )
+
+    return YouTubeTranscriptApi()
+
+
 @app.get("/api/transcript")
 def get_transcript(
     url: str = Query(..., description="YouTube video URL or 11-character video ID"),
@@ -113,7 +140,7 @@ def get_transcript(
             detail="Invalid YouTube URL. Please paste a valid youtube.com or youtu.be link.",
         )
 
-    api = YouTubeTranscriptApi()
+    api = build_transcript_api()
     try:
         transcript_list = api.list(video_id)
     except TranscriptsDisabled:
