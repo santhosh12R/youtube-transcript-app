@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>YouTube to Transcript</title>
+  <link rel="stylesheet" href="/static/styles.css" />
+</head>
+<body>
+  <div class="page-shell">
+    <header class="hero">
+      <div class="badge">Instant Transcript Extractor</div>
+      <h1>YouTube Video to Transcript</h1>
+      <p class="subtitle">
+        Paste any YouTube link (watch, youtu.be, shorts, or live) to extract a clean, searchable, and downloadable transcript.
+      </p>
+
+      <form id="transcript-form" class="url-form" autocomplete="off">
+        <div class="input-wrap">
+          <input
+            id="url-input"
+            type="text"
+            placeholder="https://www.youtube.com/watch?v=..."
+            aria-label="YouTube video URL"
+            required
+          />
+          <button type="button" id="clear-btn" class="ghost-btn" title="Clear input" hidden>Clear</button>
+        </div>
+        <button type="submit" id="submit-btn" class="primary-btn">
+          <span class="btn-label">Get Transcript</span>
+          <span class="spinner" hidden></span>
+        </button>
+      </form>
+
+      <div class="quick-examples">
+        <span>Supports:</span>
+        <code>youtube.com/watch?v=...</code>
+        <code>youtu.be/...</code>
+        <code>youtube.com/shorts/...</code>
+      </div>
+    </header>
+
+    <div id="error-box" class="error-box" role="alert" hidden></div>
+
+    <main id="result-section" class="result-section" hidden>
+      <section class="video-card">
+        <img id="video-thumb" class="video-thumb" alt="Video thumbnail" />
+        <div class="video-meta">
+          <a id="video-title" class="video-title" target="_blank" rel="noopener noreferrer"></a>
+          <div class="meta-row">
+            <span id="video-author" class="meta-pill"></span>
+            <span id="word-count" class="meta-pill"></span>
+            <span id="segment-count" class="meta-pill"></span>
+          </div>
+          <div class="lang-row">
+            <label for="lang-select">Language:</label>
+            <select id="lang-select"></select>
+          </div>
+        </div>
+      </section>
+
+      <section class="toolbar">
+        <div class="toolbar-left">
+          <label class="toggle-chip">
+            <input type="checkbox" id="toggle-timestamps" checked />
+            <span>Timestamps</span>
+          </label>
+          <label class="toggle-chip">
+            <input type="checkbox" id="toggle-paragraph" />
+            <span>Paragraph View</span>
+          </label>
+        </div>
+
+        <div class="toolbar-center">
+          <input
+            id="search-input"
+            type="search"
+            placeholder="Search in transcript..."
+            aria-label="Search transcript"
+          />
+        </div>
+
+        <div class="toolbar-right">
+          <button type="button" id="copy-btn" class="action-btn">Copy Text</button>
+          <button type="button" id="download-txt-btn" class="action-btn">Download .TXT</button>
+          <button type="button" id="download-srt-btn" class="action-btn">Download .SRT</button>
+        </div>
+      </section>
+
+      <section id="transcript-container" class="transcript-container" aria-live="polite"></section>
+    </main>
+  </div>
+
+  <script src="/static/app.js"></script>
+</body>
+</html>
